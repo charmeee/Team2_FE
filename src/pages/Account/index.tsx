@@ -20,11 +20,10 @@ const AccountPage: FC = () => {
     const [currentNickname, setCurrentNickname] = useState('수용이');
     const { isLoading, isError, data, error } = useQuery(
         ['userTitles', userId],
-        () =>
-            userId
-                ? titleSearchApi.getUserTitles(userId)
-                : Promise.reject('No user ID provided'),
+        titleSearchApi.getUserTitles,
     );
+    console.log('titleSearchApi', data);
+
     const handleChangeNicknameClick = () => {
         setModalOpen(true);
     };
@@ -66,17 +65,21 @@ const AccountPage: FC = () => {
         });
     }
 
-    const profileProps = {
-        img: 'user.png',
-        titleIdx: 2,
-        achievementTitle: getTitleNames(data),
-    };
-
     const userInfoProps = {
         name: '최수용',
         nickname: currentNickname,
         email: 'example@gmail.com',
         onNicknameChangeClick: handleChangeNicknameClick,
+    };
+
+    if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>An error has occurred: error message here</div>;
+    if (!data) return <div>No data</div>;
+
+    const profileProps = {
+        img: 'user.png',
+        titleIdx: 2,
+        achievementTitle: getTitleNames(data),
     };
 
     return (
